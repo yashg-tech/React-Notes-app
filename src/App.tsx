@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 
 
@@ -7,7 +7,14 @@ const App  = () => {
   
   const [title, setTitle] = useState('')
   const [details,setDetails] = useState('')
-  const [task, setTask] = useState<{title:string,details:string}[]>([])
+  const [task, setTask] = useState<{title:string,details:string}[]>(() => {
+    const savedNotes = localStorage.getItem("notes")
+
+    if (savedNotes){
+      return JSON.parse(savedNotes)
+    }
+    return[]
+  })
   const [search, setSearch] = useState("")
   const [editIndex, setEditIndex] = useState<number | null>(null)
   const[isEditing, setIsEditing] = useState(false)
@@ -54,6 +61,11 @@ setTask(copyTask);
   const filteredNotes = task.filter((note) =>
   note.title.toLowerCase().includes(search.toLowerCase())
 )
+
+  useEffect(() =>{
+    localStorage.setItem("notes",JSON.stringify(task))
+
+},[task])
   return (
     <div className='h-screen lg:flex text-black bg-white'>
     <form onSubmit={(e)=>{
